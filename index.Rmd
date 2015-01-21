@@ -1,0 +1,120 @@
+---
+title       : Sedimentation of active particles
+subtitle    : Orientation distribution of active particles
+author      : Katrin Wolff
+job         : phys
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## What are active particles?
+
+- Active particles are micron-sized particles using chemical energy to
+  achieve propulsion
+- Here, we have a look at self-propelled particles (for simulations this
+ just means that they have fixed intrinsic speed $v_0$ but variable orientation
+ $\mathbf{p}$)
+- Particles could, for example, be microswimmers like bacteria or catalytic
+ (and therefore self-propelled) colloids
+
+<div style='text-align: center;'>
+<img src="fig/activeparticle.jpg" style="width: 200px;"/>
+</div>
+
+---&twocol w1:40% w2:60%
+
+## Sedimentation profile
+
+*** =right
+
+```{r,echo=FALSE}
+
+alldata <- read.table('particle_pos_ori_data.dat')
+
+# get z position and z orientation of particle trajectory and only use
+# last 10^5 data points
+zpos <- alldata$V3
+zpos <- zpos[(length(zpos)-100000):length(zpos)]
+zori <- alldata$V6
+zori <- zori[(length(zori)-100000):length(zori)]
+
+hist(zpos, xlab='Particle position (z component)', col='blue',main='Position distribution (height z) of particles in steady-state')
+```
+
+*** =left
+
+Simulation snapshot of active sedimenting particles
+
+<img src="fig/snapshotpe8thinnedout.png" style="width: 300px;"/>
+
+Sedimentation profile is similar to that of passive particles and an effective 
+temperature $T_\mathrm{eff}$ depending on particle speed can be defined.
+
+---&twocol w1:40% w2:60%
+
+## Uniform orientation distribution overall
+
+*** =left
+
+```{r,echo=FALSE}
+
+hist(zori, xlab='Particle position (z component)', col='blue',main='Particle orientation distribution')
+```
+
+*** =right
+
+- No aligning force (torque) acting on particles $\hookrightarrow$ overall
+    distribution of particles is uniform
+    
+- $z$-component of orientation is $p_z = \cos(\theta) \in [-1,1]$ where $-1$
+    means "swimming down" and $+1$ means "swimming up".
+
+---&twocol w1:30% w2:30%
+
+
+However, if we restrict our data to certain position slices (see illustration
+on p. 3), particles do have preferred swimming directions! 
+This is purely a kinetic "sorting" effect without counterpart for equilibrium
+systems and passive particles.
+
+*** =left
+
+```{r,echo=FALSE}
+
+zorislice1 <- numeric(length=0)
+zorislice2 <- numeric(length=0)
+zlow1 <- 45
+zhigh1 <- 50
+zlow2 <- 0
+zhigh2 <- 5
+
+for(i in seq(1:length(zpos))){
+           
+  if(zpos[i] <= zhigh1 && zpos[i] > zlow2){
+    # appending to existing vector must be very slow...
+    zorislice1 <- c(zorislice1, zori[i])
+  }
+           
+  if(zpos[i] <= zhigh2 && zpos[i] > zlow2){
+    # appending to existing vector must be very slow...
+    zorislice2 <- c(zorislice2, zori[i])
+  }
+}
+      
+hist(zorislice1, xlab='Particle orientation (z component)', col='blue',main='Orientation distribution in slice 45 < z < 50')
+```
+
+*** =right
+
+```{r,echo=FALSE}
+
+hist(zorislice2, xlab='Particle orientation (z component)', col='blue',main='Orientation distribution in slice 0 < z < 5')
+```
+
+
+
+
